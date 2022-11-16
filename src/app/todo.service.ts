@@ -12,9 +12,13 @@ export class TodoService {
   #useMutation = inject(UseMutation);
 
   getTodos() {
-    return this.#useQuery(['todos', 'list'], () => {
-      return getTodos();
-    });
+    return this.#useQuery(
+      ['todos', 'list'],
+      () => {
+        return getTodos();
+      },
+      { staleTime: 0 }
+    );
   }
 
   toggleTodo() {
