@@ -1,4 +1,11 @@
-import { of, delay, map, tap, throwError } from 'rxjs';
+import {
+  of,
+  delay,
+  map,
+  tap,
+  throwError,
+  MonoTypeOperatorFunction,
+} from 'rxjs';
 
 export interface TODO {
   id: string;
@@ -8,6 +15,9 @@ export interface TODO {
 }
 
 const easyId = () => Math.random().toString(32).slice(2);
+const delayMax: <T>(milliseconds: number) => MonoTypeOperatorFunction<T> = (
+  milliseconds
+) => delay(Math.ceil(Math.random() * milliseconds));
 
 const TODO_TABLE: TODO[] = [
   { id: easyId(), title: 'Learn angular query', description: '', done: false },
@@ -15,13 +25,13 @@ const TODO_TABLE: TODO[] = [
 
 const getTodos = () => {
   console.log('Requesting getTodos');
-  return of(TODO_TABLE).pipe(delay(Math.ceil(Math.random() * 3000)));
+  return of(TODO_TABLE).pipe(delayMax(3000));
 };
 
 const toggleTodos = (id: string) => {
   console.log('Requesting toggleTodos');
   return of(id).pipe(
-    delay(Math.ceil(Math.random() * 3000)),
+    delayMax(3000),
     tap((id) => {
       const todo = TODO_TABLE.find((t) => t.id === id);
       if (todo) {
@@ -39,7 +49,7 @@ const toggleTodos = (id: string) => {
 const addTodo = (todo: Omit<TODO, 'id'>) => {
   console.log('Requesting addTodo');
   return of(todo).pipe(
-    delay(Math.ceil(Math.random() * 3000)),
+    delayMax(3000),
     map((todo) => ({ ...todo, id: easyId() } as TODO)),
     tap((todo) => {
       TODO_TABLE.push(todo);
@@ -50,7 +60,7 @@ const addTodo = (todo: Omit<TODO, 'id'>) => {
 const deleteTodo = (id: string) => {
   console.log('Requesting deleteTodo');
   return of(id).pipe(
-    delay(Math.ceil(Math.random() * 3000)),
+    delayMax(3000),
     map((id) => {
       const todo = TODO_TABLE.find((t) => t.id === id);
       if (todo) {
